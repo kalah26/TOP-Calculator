@@ -4,14 +4,19 @@ html {
 
 *, *::after, *::before {
     box-sizing: inherit;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     font-size: 32px;
     color: #fff;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 .calculator {
@@ -21,18 +26,19 @@ body {
     border-radius: 18px;
     padding: 5px;
     background-color: black;
+    max-width: 400px;
 }
 
 .display {
     background-color: rgb(134, 134, 64);
-    border-radius: 12px;
     height: 100px;
-    margin: 5px;
     padding: 5px;
     display: flex;
+    font-size: 36px;
     justify-content: flex-end;
     align-items: flex-end;
-    font-size: 64px;
+    border-radius: 12px;
+    margin: 5px;
 }
 
 .keys {
@@ -56,7 +62,7 @@ body {
     color: #fff;
 }
 
-.operator {
+.operator, #percentageButton {
     background-color: rgb(210, 105, 30);
 }
 

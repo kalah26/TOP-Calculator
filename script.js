@@ -6,14 +6,14 @@ const operators = document.querySelectorAll('.operator')
 const equalButton = document.getElementById('equalButton')
 const decimalButton = document.getElementById('decimalButton')
 const signToggle = document.getElementById('signToggle')
+const percentageButton = document.getElementById('percentageButton')
 let firstOperand = ''
 let secondOperand = ''
 let resetScreen = false;
 let currentOperator = NaN;
 
 function appendDigit(number) {
-    if (display.textContent === '0')
-        resetDisplay();
+    if (display.textContent === '0' || resetScreen) resetDisplay();
     display.textContent += number;
 }
 
@@ -21,24 +21,25 @@ digits.forEach((digit) => digit.addEventListener('click', () => appendDigit(digi
 resetButton.addEventListener('click', () => clearDisplay())
 deleteButton.addEventListener('click', () => erase())
 operators.forEach((operator) => operator.addEventListener('click', ()=> {
+    if (currentOperator !== null) calculate();
     firstOperand = display.textContent
     currentOperator = operator.textContent
-    resetDisplay()
+    resetScreen = true;
 }))
 
 equalButton.addEventListener('click', ()=> calculate())
 decimalButton.addEventListener('click', ()=> {
-    if (display.textContent.includes('.')){
-        return
-    }
-    if (display.textContent === '0') {
-        display.textContent = '0'
-    }
+    if (display.textContent.includes('.')) return
+    if (display.textContent === '0') display.textContent = '0'
     appendDigit('.')
 })
 
 signToggle.addEventListener('click', ()=> {
     display.textContent = negate(display.textContent)
+})
+
+percentageButton.addEventListener('click', ()=> {
+    display.textContent = percentage(display.textContent)
 })
 
 function clearDisplay() {
@@ -48,24 +49,22 @@ function clearDisplay() {
 
 function resetDisplay() {
     display.textContent = '';
+    resetScreen = false;
 }
 
 function erase() {
     display.textContent = display.textContent.slice(0,-1)
-    if (currentOperator !== null && display.textContent !== '0') {
-        currentOperator = null
-    }
-    if (display.textContent.length === 0 && display.textContent !== 0) {
-        display.textContent = '0'
-    }
+    if (currentOperator !== null && display.textContent !== '0') currentOperator = null
+    if (display.textContent.length === 0 && display.textContent !== 0) display.textContent = '0'
 }
 
 function calculate() {
-    if (currentOperator !== null) {
-        secondOperand = display.textContent;
-        const result = operate(currentOperator, firstOperand, secondOperand);
-        display.textContent = round(result);
-    }
+    if (currentOperator === null || resetScreen) return;
+    secondOperand = display.textContent;
+    const result = round(operate(currentOperator, firstOperand, secondOperand));
+    display.textContent = result;
+    currentOperator = null
+    resetScreen = true
 }
 
 /* operations */
@@ -85,12 +84,12 @@ function divide(a, b) {
     return a / b;
 }
 
-function percentage(a) {
-    return a / 100;
-}
-
 function negate(a) {
     return -1 * a;
+}
+
+function percentage(a) {
+    return a / 100;
 }
 
 function round(a) {
@@ -109,5 +108,7 @@ function operate(operand, a, b) {
             return multiply(a, b)
         case "÷":
             return divide(a, b)
+        default:
+            return null;
     }
 }
